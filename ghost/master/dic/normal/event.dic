@@ -82,14 +82,20 @@ sys.input.message
 	zap.message = reference[1]
 	_url = "https://api.yabu.me/v0/profiles/%(zap.targetPubkey)"
 	_async = 'profile'
-	"\![execute,http-get,%(_url),--async=%(_async),--nofile=UTF-8]\e"
+	"\![execute,http-get,%(_url),--async=%(_async),--file=profile.json]\e"
 }
 //取得したプロフィールイベントからlud16を探してlnurlを構築してリクエストを投げる
 sys.http.profile
 {
-	_json = reference[3]
+	_path = GETSETTING('coreinfo.path') + 'var/profile.json'
+	if (!FOPEN(_path, 'r')) {
+		'\0\_qfailed to open json file\e'
+		return
+	}
+	_json = FREAD(_path)
+	FCLOSE(_path)
 	//本当はちゃんとJSONパースすべきだけど今回は簡易的に
-	if !RE_SEARCH(_json, ',\\"lud16\\":\\"(.+)@(.+)\\"[,}]') {
+	if !RE_SEARCH(_json, ',\\"lud16\\":\\"(.+?)@(.+?)\\"[,}]') {
 		'\0\_qlud16 not found\e'
 		return
 	}
@@ -98,12 +104,18 @@ sys.http.profile
 	_domain = _lud16[2]
 	_lnurl = "https://%(_domain)/.well-known/lnurlp/%(_name)"
 	_async = 'lnurl'
-	"\![execute,http-get,%(_lnurl),--async=%(_async),--nofile=UTF-8]\e"
+	"\![execute,http-get,%(_lnurl),--async=%(_async),--file=lmurl.json]\e"
 }
 //lnurlのレスポンスからzapEndpointを取得してzapRequestEventを構築して送信
 sys.http.lnurl
 {
-	_json = reference[3]
+	_path = GETSETTING('coreinfo.path') + 'var/lmurl.json'
+	if (!FOPEN(_path, 'r')) {
+		'\0\_qfailed to open json file\e'
+		return
+	}
+	_json = FREAD(_path)
+	FCLOSE(_path)
 	if !RE_SEARCH(_json, '"allowsNostr":true') {
 		'\0\_qallowsNostr is not true\e'
 		return
@@ -128,12 +140,18 @@ sys.http.lnurl
 	}
 	//invoiceの取得
 	_async = 'zap'
-	"\![execute,http-get,%(_zapEndpoint),--param=amount=%(zap.amount),--param=nostr=%(STRENCODE(_zapRequestEvent, 1, 'url')),--async=%(_async),--nofile=UTF-8]\e"
+	"\![execute,http-get,%(_zapEndpoint),--param=amount=%(zap.amount),--param=nostr=%(STRENCODE(_zapRequestEvent, 1, 'url')),--async=%(_async),--file=zap.json]\e"
 }
 //invoiceを取得してQRコードにして表示
 sys.http.zap
 {
-	_json = reference[3]
+	_path = GETSETTING('coreinfo.path') + 'var/zap.json'
+	if (!FOPEN(_path, 'r')) {
+		'\0\_qfailed to open json file\e'
+		return
+	}
+	_json = FREAD(_path)
+	FCLOSE(_path)
 	if !RE_SEARCH(_json, '"pr":"(.+?)"') {
 		'\0\_qpr not found\e'
 		return

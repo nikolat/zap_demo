@@ -45,7 +45,7 @@ MouseDoubleClick0
 }
 sys.cs.inputPubkey
 {
-	'\0\![open,inputbox,pubkey,30000]\e'
+	'\0\s[0]\![open,inputbox,pubkey,30000]npub形式じゃなくてHEX形式で入力してね。\e'
 }
 sys.input.pubkey
 {

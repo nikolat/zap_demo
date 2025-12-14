@@ -1,0 +1,259 @@
+//******************************************************************************
+// required event
+//******************************************************************************
+OnFirstBoot          { '\1\s[10]\0\s[0]どもー。\e' }
+OnShellChanged       { '\1\s[10]\0\s[0]どう？\e' }
+OnWindowStateRestore { '\1\s[10]\0\s[0]\e' }
+OnGhostChanged       { OnBoot() }
+OnBoot
+{
+	'\1\s[10]'
+	--
+	'\0\s[0]やあやあ。'
+	'\0\s[0]呼んだ？'
+	'\0\s[0]投げ銭する？'
+	--
+	'\e'
+}
+OnClose
+{
+	'\1\s[10]'
+	--
+	'\0\s[0]じゃあね。'
+	'\0\s[0]またね。'
+	'\0\s[0]えんいー。'
+	--
+	'\_w[500]\-\e'
+}
+
+//******************************************************************************
+// mouse event
+//******************************************************************************
+OnMouseDoubleClick
+{
+	AYATEMPLATE.MouseEventExec('MouseDoubleClick');
+}
+MouseDoubleClick0
+{
+	_res = '\0\s[0]\_q誰に投げ銭する？\n\n'
+	_res += '\![*]\__q[zapTarget,6b0a60cff3eca5a2b2505ccb3f7133d8422045cbef40f3d2c6189fb0b952e7d4]Don / @nikolat\__q\n'
+	_res += '\![*]\__q[zapTarget,27355452eb72146762ebf74dd82b96c1c9ad9a385cfcefde32cb168aee4f63b0]ぽな / @ponapalt\__q\n'
+	_res += '\![*]\__q[zapTarget,38e4a47f27e4dc88375144f512cee3cd6c1fada3589d6cb735b17606f413d491]月波 清火 / @tukinami_seika\__q\n\n'
+	_res += '\![*]\__q[inputPubkey]送信先の公開鍵を自分で入力する\__q\n\n'
+	_res += '\![*]\__q[Menu_CANCEL]キャンセル\__q\e'
+	_res
+}
+sys.cs.inputPubkey
+{
+	'\0\![open,inputbox,pubkey,30000]\e'
+}
+sys.input.pubkey
+{
+	if reference[1] == '' {
+		'\0\![open,inputbox,pubkey,30000]\e'
+	}
+	else {
+		zap.targetPubkey = reference[1]
+		sys.fnc.askSats()
+	}
+}
+sys.csex.zapTarget
+{
+	zap.targetPubkey = reference[2]
+	sys.fnc.askSats()
+}
+sys.fnc.askSats
+{
+	'\0\s[0]\_qいくら投げ銭する？\![open,inputbox,sats,30000,39]\e'
+}
+sys.input.sats
+{
+	_sats = TOINT(reference[1])
+	if _sats <= 0 {
+		'\0\s[0]\_q0以上の整数を入力してね。\![open,inputbox,sats,30000,39]\e'
+	}
+	else {
+		zap.amount = _sats * 1000
+		'\0\s[0]\_qどんなメッセージを送る？\![open,inputbox,message,30000,感謝のZap！いつもありがとう！]\e'
+	}
+}
+sys.input.message
+{
+	zap.message = reference[1]
+	_url = "https://api.yabu.me/v0/profiles/%(zap.targetPubkey)"
+	_async = 'profile'
+	"\![execute,http-get,%(_url),--async=%(_async),--nofile=UTF-8]\e"
+}
+//取得したプロフィールイベントからlud16を探してlnurlを構築してリクエストを投げる
+sys.http.profile
+{
+	_json = reference[3]
+	//本当はちゃんとJSONパースすべきだけど今回は簡易的に
+	if !RE_SEARCH(_json, ',\\"lud16\\":\\"(.+)@(.+)\\"[,}]') {
+		'\0\_qlud16 not found\e'
+		return
+	}
+	_lud16 = RE_GETSTR()
+	_name = _lud16[1]
+	_domain = _lud16[2]
+	_lnurl = "https://%(_domain)/.well-known/lnurlp/%(_name)"
+	_async = 'lnurl'
+	"\![execute,http-get,%(_lnurl),--async=%(_async),--nofile=UTF-8]\e"
+}
+//lnurlのレスポンスからzapEndpointを取得してzapRequestEventを構築して送信
+sys.http.lnurl
+{
+	_json = reference[3]
+	if !RE_SEARCH(_json, '"allowsNostr":true') {
+		'\0\_qallowsNostr is not true\e'
+		return
+	}
+	if !RE_SEARCH(_json, '"nostrPubkey":"\w+"') {
+		'\0\_qnostrPubkey not found\e'
+		return
+	}
+	if !RE_SEARCH(_json, '"callback":"(https://.+?)"') {
+		'\0\_qcallback not found\e'
+		return
+	}
+	_zapEndpoint = RE_GETSTR()[1]
+	_relay = 'wss://yabu.me/'
+	if !ISVAR('zap.seckey') {
+		zap.seckey = SAORI('saori/saori-nostr/saori_nostr.dll', 'generate_secret_key')
+	}
+	_zapRequestEvent = SAORI('saori/saori-nostr/saori_nostr.dll', 'create_zap_request', zap.targetPubkey, zap.amount, zap.message, _relay, zap.seckey)
+	if _zapRequestEvent == '' {
+		'\0\_qcannot make zap request\e'
+		return
+	}
+	//invoiceの取得
+	_async = 'zap'
+	"\![execute,http-get,%(_zapEndpoint),--param=amount=%(zap.amount),--param=nostr=%(STRENCODE(_zapRequestEvent)),--async=%(_async),--nofile=UTF-8]\e"
+}
+//invoiceを取得してQRコードにして表示
+sys.http.zap
+{
+	_json = reference[3]
+	if !RE_SEARCH(_json, '"pr":"(.+?)"') {
+		'\0\_qpr not found\e'
+		return
+	}
+	_invoice = RE_GETSTR()[1]
+	_path_b = GETSETTING('coreinfo.path') + 'invoice_b.png'
+	_path_a = GETSETTING('coreinfo.path') + 'invoice_a.png'
+	_ = SAORI('saori/saori-qrcode/saori_qrcode.dll', 'image', _invoice, _path_b)
+	_ = SAORI('saori/saori-resized-png/resizedpng.dll', 'ToResizedPng', _path_b, _path_a, '300', '300')
+	"\0\b[2]\_q投げ銭はこちらへ！\n\_a[textcopy,%(AYATEMPLATE.EscapeText(_invoice))]\_b[%(_path_a),inline,centerx,centery]\_a"
+}
+sys.asex.textcopy
+{
+	_invoice = reference[2]
+	void SAORI('saori/textcopy2/textcopy2.dll', _invoice)
+	'\C\e'
+}
+sys.cs.Menu_CANCEL
+{
+	'\0\s[0]\e'
+}
+
+//******************************************************************************
+// UI event
+//******************************************************************************
+OnUserInput
+{
+	_id = 'sys.input.' + reference[0]
+	if ISFUNC(_id) {
+		EVAL(_id)
+	}
+}
+OnUserInputCancel
+{
+	'\0\s[0]\e'
+}
+OnKeyPress
+{
+	_id = 'sys.key.' + reference[0]
+	if ISFUNC(_id) {
+		EVAL(_id)
+	}
+}
+OnChoiceSelect
+{
+	_id = 'sys.cs.' + reference[0]
+	if ISFUNC(_id) {
+		EVAL(_id)
+	}
+}
+OnChoiceSelectEx
+{
+	_id = 'sys.csex.' + reference[1]
+	if ISFUNC(_id) {
+		EVAL(_id)
+	}
+}
+OnChoiceTimeout
+{
+	'\0\s[0]\e'
+}
+OnAnchorSelect
+{
+	_id = 'sys.as.' + reference[0]
+	if ISFUNC(_id) {
+		EVAL(_id)
+	}
+}
+OnAnchorSelectEx
+{
+	_id = 'sys.asex.' + reference[1]
+	if ISFUNC(_id) {
+		EVAL(_id)
+	}
+}
+sys.key.r
+{
+	'\![reload,shiori]\0\s[0]\_qReloaded.\_q\e'
+}
+
+//******************************************************************************
+// http event
+//******************************************************************************
+OnExecuteHTTPComplete
+{
+	_id = 'sys.http.' + reference[1]
+	if ISFUNC(_id) {
+		EVAL(_id)
+	}
+}
+OnExecuteHTTPFailure
+{
+	"\0\_qHTTP Failure: %(SHIORI3FW.EscapeAllTags(reference[1]))\e"
+}
+
+//******************************************************************************
+// update event
+//******************************************************************************
+OnUpdateBegin    { '\0\s[0]\_qUpdate Begin.\_q\e' }
+OnUpdateComplete { '\0\s[0]\_q' + SHIORI3FW.EscapeAllTags(reference[0]) + '.\_q\e' }
+OnUpdateFailure  { '\0\s[0]\_q' + SHIORI3FW.EscapeAllTags(reference[0]) + '.\_q\e' }
+OnUpdateReady
+{
+	_n = 0
+	if sender == 'embryo' {
+		_n = TOINT(reference[0]) + 1
+	} else {
+		_n = TOINT(reference[0])
+	}
+	if _n > 1 {
+		'\0\s[0]\_q' + _n + ' files exist.\_q\e'
+	} elseif _n == 1 {
+		'\0\s[0]\_q' + _n + ' file exists.\_q\e'
+	}
+}
+
+//******************************************************************************
+// other
+//******************************************************************************
+OnSurfaceRestore
+{
+	'\1\s[10]\0\s[0]\e'
+}

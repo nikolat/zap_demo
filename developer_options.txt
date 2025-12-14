@@ -1,0 +1,6 @@
+updates.txt,noupdate,nonar
+updates2.dau,noupdate,nonar
+developer_options.txt,noupdate,nonar
+ghost\master\tama.txt,noupdate,nonar
+ghost\master\updates.txt,noupdate,nonar
+ghost\master\updates2.dau,noupdate,nonar

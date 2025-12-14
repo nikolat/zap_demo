@@ -1,0 +1,13 @@
+charset,UTF-8
+type,shell
+name,master
+
+craftmanw,双見酔
+craftmanurl,http://tsunatsuki.web.fc2.com/nishikikai/index.html
+
+//ウインドウ位置
+seriko.alignmenttodesktop,free
+
+//readme指定
+readme,readme.txt
+readme.charset,UTF-8

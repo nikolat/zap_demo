@@ -128,7 +128,7 @@ sys.http.lnurl
 	}
 	//invoiceの取得
 	_async = 'zap'
-	"\![execute,http-get,%(_zapEndpoint),--param=amount=%(zap.amount),--param=nostr=%(STRENCODE(_zapRequestEvent)),--async=%(_async),--nofile=UTF-8]\e"
+	"\![execute,http-get,%(_zapEndpoint),--param=amount=%(zap.amount),--param=nostr=%(STRENCODE(_zapRequestEvent, 1, 'url')),--async=%(_async),--nofile=UTF-8]\e"
 }
 //invoiceを取得してQRコードにして表示
 sys.http.zap

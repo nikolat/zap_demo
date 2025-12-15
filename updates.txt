@@ -2,8 +2,8 @@ charset,UTF-8
 file,LICENSE65d3616852dbf7b1a6d4b53b00626032size=7048date=2012-12-21T00:00:00
 file,ghost/master/descript.txt1643db63ba3f7ae974a99685d6ab3b26size=243date=2012-12-21T00:00:00
 file,ghost/master/dic/emerg/yaya_emerg_dic.diccd09811b965b27d901a6ca9f2c81bc28size=872date=2012-12-21T00:00:00
-file,ghost/master/dic/normal/event.dic87dee0b4b4882794f8fea2e1c0e0c3c1size=7202date=2012-12-21T00:00:00
-file,ghost/master/dic/normal/resource.dic1c8558a9d2be05c817a92da1fbd3d4a8size=709date=2012-12-21T00:00:00
+file,ghost/master/dic/normal/event.dic54514813cbaff32bc83a7f59b91a460asize=7200date=2012-12-21T00:00:00
+file,ghost/master/dic/normal/resource.dice3340107348a367c92fe801c4ecae4a8size=911date=2012-12-21T00:00:00
 file,ghost/master/dic/normal/yaya_tmpl_util.dic30e758b7b2e4cff46138ca21bc67c45fsize=1872date=2012-12-21T00:00:00
 file,ghost/master/dic/system/_loading_order.txt0868241bb617c7c18013e2c024d18dd9size=18date=2012-12-21T00:00:00
 file,ghost/master/dic/system/yaya_base/_loading_order.txt9c350c2c9c08f635bff5eaae149af8c8size=103date=2012-12-21T00:00:00

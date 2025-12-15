@@ -11,11 +11,13 @@ On_sakura.portalsites
 {
 	"/
 		うかフィード%(CHR(1))https://feed.ukagaka.net/%(CHR(1))%(CHR(1))%(CHR(2))/
+		yaya-shiori%(CHR(1))https://github.com/YAYA-shiori/yaya-shiori/wiki%(CHR(1))%(CHR(1))%(CHR(2))/
 	"
 }
 On_sakura.recommendsites
 {
 	"/
-		yaya-shiori%(CHR(1))https://github.com/YAYA-shiori/yaya-shiori/wiki%(CHR(1))%(CHR(1))%(CHR(2))/
+		Welcome to Nostr! ～ Nostrをはじめよう！ ～%(CHR(1))https://welcome.nostr-jp.org/%(CHR(1))%(CHR(1))%(CHR(2))/
+		おいくらサッツ%(CHR(1))https://osats.money/%(CHR(1))%(CHR(1))%(CHR(2))/
 	"
 }

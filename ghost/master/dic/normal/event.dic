@@ -64,7 +64,7 @@ sys.csex.zapTarget
 }
 sys.fnc.askSats
 {
-	'\0\s[0]\_qいくら投げ銭する？\![open,inputbox,sats,30000,39]\e'
+	'\0\s[0]\_q何sats投げ銭する？\![open,inputbox,sats,30000,39]\e'
 }
 sys.input.sats
 {

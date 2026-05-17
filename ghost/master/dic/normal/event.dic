@@ -74,29 +74,29 @@ sys.input.sats
 	}
 	else {
 		zap.amount = _sats * 1000
-		'\0\s[0]\_qどんなメッセージを送る？\![open,inputbox,message,30000,感謝のZap！いつもありがとう！]\e'
+		"\![execute,websocket,%(sys.fnc.getRelayURL()),--async=nostr]\0\s[0]\_qどんなメッセージを送る？\![open,inputbox,message,30000,感謝のZap！いつもありがとう！]\e"
 	}
+}
+sys.fnc.getRelayURL
+{
+	'wss://yabu.me/'
 }
 sys.input.message
 {
 	zap.message = reference[1]
-	_url = "https://api.yabu.me/v0/profiles/%(zap.targetPubkey)"
-	_async = 'profile'
-	"\![execute,http-get,%(_url),--async=%(_async),--file=profile.json]\e"
+  _data = '"[""REQ"",""subscription"",{""kinds"":[0],""authors"":[""' + zap.targetPubkey + '""],""limit"":1}]"'
+  "\![send,websocket,%(sys.fnc.getRelayURL()),%(_data)]\e"
 }
 //取得したプロフィールイベントからlud16を探してlnurlを構築してリクエストを投げる
-sys.http.profile
+OnExecuteWebSocketReceive
 {
-	_path = GETSETTING('coreinfo.path') + 'var/profile.json'
-	if (!FOPEN(_path, 'r')) {
-		'\0\_qfailed to open json file\e'
+	_json = reference[3]
+	if RE_SEARCH(_json, 'EOSE') {
+		"\C\![close,websocket,%(sys.fnc.getRelayURL())]\e"
 		return
 	}
-	_json = FREAD(_path)
-	FCLOSE(_path)
 	//本当はちゃんとJSONパースすべきだけど今回は簡易的に
 	if !RE_SEARCH(_json, ',\\"lud16\\":\\"(.+?)@(.+?)\\"[,}]') {
-		'\0\_qlud16 not found\e'
 		return
 	}
 	_lud16 = RE_GETSTR()

@@ -110,25 +110,20 @@ OnExecuteWebSocketReceive
 sys.http.lnurl
 {
 	_path = GETSETTING('coreinfo.path') + 'var/lmurl.json'
-	if (!FOPEN(_path, 'r')) {
-		'\0\_qfailed to open json file\e'
-		return
-	}
-	_json = FREAD(_path)
-	FCLOSE(_path)
-	if !RE_SEARCH(_json, '"allowsNostr":true') {
+	_json = FREADJSON(_path)
+	if !_json['allowsNostr'] {
 		'\0\_qallowsNostr is not true\e'
 		return
 	}
-	if !RE_SEARCH(_json, '"nostrPubkey":"\w+"') {
+	if !_json['nostrPubkey'] || !RE_MATCH(_json['nostrPubkey'], '^\w+$') {
 		'\0\_qnostrPubkey not found\e'
 		return
 	}
-	if !RE_SEARCH(_json, '"callback":"(https://.+?)"') {
+	if !_json['callback'] || !RE_MATCH(_json['callback'], '^https://.+?$') {
 		'\0\_qcallback not found\e'
 		return
 	}
-	_zapEndpoint = RE_GETSTR()[1]
+	_zapEndpoint = _json['callback']
 	_relay = 'wss://yabu.me/'
 	if !ISVAR('zap.seckey') {
 		zap.seckey = SAORI('saori/saori-nostr/saori_nostr.dll', 'generate_secret_key')

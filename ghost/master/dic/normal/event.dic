@@ -124,18 +124,19 @@ sys.http.lnurl
 		return
 	}
 	_zapEndpoint = _json['callback']
-	_relay = 'wss://yabu.me/'
+	_relays = ('wss://yabu.me/', 'wss://relay.nostr.wirednet.jp/', 'wss://nos.lol/')
 	if !ISVAR('zap.seckey') {
-		zap.seckey = SAORI('saori/saori-nostr/saori_nostr.dll', 'generate_secret_key')
+		zap.seckey = generateSecretKey()
 	}
-	_zapRequestEvent = SAORI('saori/saori-nostr/saori_nostr.dll', 'create_zap_request', zap.targetPubkey, zap.amount, zap.message, _relay, zap.seckey)
-	if _zapRequestEvent == '' {
+	_zapRequestEvent = makeZapRequest(zap.targetPubkey, zap.amount, zap.message, _relays)
+	_zapRequestEvent = finalizeEvent(_zapRequestEvent, zap.seckey)
+	if !verifyEvent(_zapRequestEvent) {
 		'\0\_qcannot make zap request\e'
 		return
 	}
 	//invoiceの取得
 	_async = 'zap'
-	"\![execute,http-get,%(_zapEndpoint),--param=amount=%(zap.amount),--param=nostr=%(STRENCODE(_zapRequestEvent, 1, 'url')),--async=%(_async),--file=zap.json]\e"
+	"\![execute,http-get,%(_zapEndpoint),--param=amount=%(zap.amount),--param=nostr=%(STRENCODE(DUMPJSON(_zapRequestEvent), 1, 'url')),--async=%(_async),--file=zap.json]\e"
 }
 //invoiceを取得してQRコードにして表示
 sys.http.zap

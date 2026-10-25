@@ -1,0 +1,4 @@
+ghost/master/saori/saori-nostr/LICENSE
+ghost/master/saori/saori-nostr/README.md
+ghost/master/saori/saori-nostr/saori_nostr.dll
+ghost/master/saori/saori-nostr/

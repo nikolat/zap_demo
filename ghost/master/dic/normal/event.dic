@@ -128,7 +128,7 @@ sys.http.lnurl
 	if !ISVAR('zap.seckey') {
 		zap.seckey = generateSecretKey()
 	}
-	_zapRequestEvent = makeZapRequest(zap.targetPubkey, zap.amount, zap.message, _relays)
+	_zapRequestEvent = nip57.makeZapRequest(zap.targetPubkey, zap.amount, zap.message, _relays)
 	_zapRequestEvent = finalizeEvent(_zapRequestEvent, zap.seckey)
 	if !verifyEvent(_zapRequestEvent) {
 		'\0\_qcannot make zap request\e'

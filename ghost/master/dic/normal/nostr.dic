@@ -1,21 +1,39 @@
+//******************************************************************************
+// nostr-tools 互換(?) Pure YAYA ライブラリ nostr.dic
+// license: CC0-1.0
+//
+// nostr-tools
+// https://github.com/nbd-wtf/nostr-tools
+//
+// SAORI over DirectSSTP
+// https://ukatech.shillest.net/ukadoc-spec/spec/saori-ex/
+//
+// YAYA マニュアル
+// https://yaya-shiori.github.io/yaya-docs/
+//******************************************************************************
 
+//******************************************************************************
+// NIP-01
+//******************************************************************************
 generateSecretKey
 {
-	void FUNCTIONEX('internal_crypto', 'GenerateKeyPair', 'bip340')
-	valueex[0]
+	_privateKey = FUNCTIONEX('internal_crypto', 'GenerateKeyPair', 'bip340')
+	_privateKey = valueex[0]
+	_publicKey = valueex[1]
+	_privateKey
 }
 
 getPublicKey
 {
 	_privateKey = _argv[0]
-	FUNCTIONEX('internal_crypto', 'KeyAgreement', 'secp256k1', _privateKey, '79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798')
+	_publicKey = FUNCTIONEX('internal_crypto', 'KeyAgreement', 'secp256k1', _privateKey, '79be667ef9dcbbac55a06295ce870b07029bfcdb2dce28d959f2815b16f81798')
+	_publicKey
 }
 
 finalizeEvent
 {
 	_ev = _argv[0]
 	_secretKey = _argv[1]
-
 	_ev['pubkey'] = getPublicKey(_secretKey)
 	_ev['id'] = getEventHash(_ev)
 	_ev['sig'] = FUNCTIONEX('internal_crypto', 'Sign', 'bip340', _secretKey, _ev['id'], '--data-in=hex')
@@ -25,12 +43,11 @@ finalizeEvent
 verifyEvent
 {
 	_ev = _argv[0]
-
 	if _ev['id'] != getEventHash(_ev) {
 		return 0
 	}
-
-	FUNCTIONEX('internal_crypto', 'Verify', 'bip340', _ev['pubkey'], _ev['id'], _ev['sig'], '--data-in=hex')
+	_isVerified = FUNCTIONEX('internal_crypto', 'Verify', 'bip340', _ev['pubkey'], _ev['id'], _ev['sig'], '--data-in=hex')
+	_isVerified
 }
 
 serializeEvent
@@ -48,28 +65,58 @@ serializeEvent
 getEventHash
 {
 	_ev = _argv[0]
-	FUNCTIONEX('internal_crypto', 'Digest', 'sha256', serializeEvent(_ev))
+	_id = FUNCTIONEX('internal_crypto', 'Digest', 'sha256', serializeEvent(_ev))
+	_id
 }
 
-makeZapRequest
+//******************************************************************************
+// NIP-19
+//******************************************************************************
+nip19.decode
+{
+	_code = _argv[0]
+	_prefix = SPLIT(_code, '1')[0]
+	_data = FUNCTIONEX('internal_data', 'Convert', _code, '--data-in=bech32', '--out=hex')
+	case _prefix {
+		when 'nsec', 'npub' {
+			return IHASH('type', _prefix, 'data', _data)
+		}
+	}
+}
+
+nip19.nsecEncode
+{
+	_privateKey = _argv[0]
+	_nsec = FUNCTIONEX('internal_data', 'Convert', _privateKey, '--data-in=hex', '--out=bech32', '--hrp=nsec')
+	_nsec
+}
+
+nip19.npubEncode
+{
+	_publicKey = _argv[0]
+	_npub = FUNCTIONEX('internal_data', 'Convert', _publicKey, '--data-in=hex', '--out=bech32', '--hrp=npub')
+	_npub
+}
+
+//******************************************************************************
+// NIP-57
+//******************************************************************************
+nip57.makeZapRequest
 {
 	_targetPubkey = _argv[0]
 	_zapAmount = _argv[1]
 	_zapMessage = _argv[2]
 	_relays = _argv[3, -1]
-
 	_t = GETTIME()
 	_now = GETSECCOUNT(_t[0], _t[1], _t[2], 0, _t[4], _t[5], _t[6])
 	_tags = PARSEJSON('[[1,2],[3,4],[5,6]]')
 	_tags[0] = ('p', _targetPubkey)
 	_tags[1] = ('amount', TOSTR(_zapAmount))
 	_tags[2] = ('relays', _relays)
-
 	_event = IHASH()
 	_event['kind'] = 9734
 	_event['created_at'] = _now
 	_event['content'] = _zapMessage
 	_event['tags'] = _tags
-
 	_event
 }

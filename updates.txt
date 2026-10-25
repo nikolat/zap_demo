@@ -1,8 +1,10 @@
 charset,UTF-8
 file,LICENSE65d3616852dbf7b1a6d4b53b00626032size=7048date=2012-12-21T00:00:00
+file,delete.txt17c52a2b4a430697746061125076fec7size=159date=2012-12-21T00:00:00
 file,ghost/master/descript.txt1643db63ba3f7ae974a99685d6ab3b26size=243date=2012-12-21T00:00:00
 file,ghost/master/dic/emerg/yaya_emerg_dic.diccd09811b965b27d901a6ca9f2c81bc28size=872date=2012-12-21T00:00:00
-file,ghost/master/dic/normal/event.dic431767443f734cc766104beacc87c1c9size=7193date=2012-12-21T00:00:00
+file,ghost/master/dic/normal/event.dicd1c424507d114dedb29f159c5233eeccsize=7223date=2012-12-21T00:00:00
+file,ghost/master/dic/normal/nostr.dic3c8dd1884f027eb2285173de8d4fd58csize=1564date=2012-12-21T00:00:00
 file,ghost/master/dic/normal/resource.dice3340107348a367c92fe801c4ecae4a8size=911date=2012-12-21T00:00:00
 file,ghost/master/dic/normal/yaya_tmpl_util.dic30e758b7b2e4cff46138ca21bc67c45fsize=1872date=2012-12-21T00:00:00
 file,ghost/master/dic/system/_loading_order.txt0868241bb617c7c18013e2c024d18dd9size=18date=2012-12-21T00:00:00
@@ -10,7 +12,7 @@ file,ghost/master/dic/system/yaya_base/_loading_order.txt608cdbb0ef2328a7f2569d
 file,ghost/master/dic/system/yaya_base/config.dic44707dafa1e7e605e2816ca68c2a84f9size=2592date=2012-12-21T00:00:00
 file,ghost/master/dic/system/yaya_base/lint.dic1cf05026921eac31d2c89d225cefc2cesize=21118date=2012-12-21T00:00:00
 file,ghost/master/dic/system/yaya_base/optional.dicff4da728a656a8aa6a38939e654c51f2size=9953date=2012-12-21T00:00:00
-file,ghost/master/dic/system/yaya_base/shiori3.dic50569aecd921bc28c40b0142591b472dsize=57034date=2012-12-21T00:00:00
+file,ghost/master/dic/system/yaya_base/shiori3.dic6711aa1268d0909fd6593cf0369a5493size=71837date=2012-12-21T00:00:00
 file,ghost/master/saori/saori-nostr/LICENSEc956c4806791ef11c33e5c37f1123a3csize=10404date=2012-12-21T00:00:00
 file,ghost/master/saori/saori-nostr/saori_nostr.dll26b923fdf096670b824fc1b3267b5a71size=2154496date=2012-12-21T00:00:00
 file,ghost/master/saori/saori-qrcode/LICENSE091e0974ae1cc0686d0916bcbb96245dsize=10345date=2012-12-21T00:00:00
@@ -21,11 +23,11 @@ file,ghost/master/saori/textcopy2/textcopy2.dllbd1f30d37cc40659391fbecf947863bb
 file,ghost/master/saori/textcopy2/textcopy2_license.txt493b92cbc7d88de5bce3e5371e749a85size=2165date=2012-12-21T00:00:00
 file,ghost/master/saori/textcopy2/textcopy2_readme.txta8ea92941e059484b548da95843f1464size=639date=2012-12-21T00:00:00
 file,ghost/master/system_config.txt69543affca7c28886d2a3dab69a0c2easize=628date=2012-12-21T00:00:00
-file,ghost/master/yaya.dll74169aa7c1749e76141bc4bdcc48b9f3size=1019904date=2012-12-21T00:00:00
+file,ghost/master/yaya.dll9efb5c028f5c8528402a5d90ecb6fb38size=2158592date=2012-12-21T00:00:00
 file,ghost/master/yaya.txt5067cd4395f7670587ab730c15361a78size=2448date=2012-12-21T00:00:00
 file,ghost/master/yaya_emerg.txtd9ee78e2068ff80d809325bd4fa8228bsize=1055date=2012-12-21T00:00:00
 file,install.txt655875b2488fa3872286b3fb8ef011casize=68date=2012-12-21T00:00:00
-file,readme.txte632a49d2373a027a2462788a163f094size=857date=2012-12-21T00:00:00
+file,readme.txta3be84bb534cd5b729c0ad139689b985size=857date=2012-12-21T00:00:00
 file,shell/master/descript.txtf3a9c7fdda23a3fb56e7e6b77fa916ecsize=233date=2012-12-21T00:00:00
 file,shell/master/readme.txtd5ee5eb8f53948cda249f2f68440c092size=10date=2012-12-21T00:00:00
 file,shell/master/surface0.png1b65c55df897e00a8bba56f407c69ad6size=2447date=2012-12-21T00:00:00

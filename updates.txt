@@ -13,8 +13,6 @@ file,ghost/master/dic/system/yaya_base/config.dic44707dafa1e7e605e2816ca68c2a84
 file,ghost/master/dic/system/yaya_base/lint.dic1cf05026921eac31d2c89d225cefc2cesize=21118date=2012-12-21T00:00:00
 file,ghost/master/dic/system/yaya_base/optional.dicff4da728a656a8aa6a38939e654c51f2size=9953date=2012-12-21T00:00:00
 file,ghost/master/dic/system/yaya_base/shiori3.dic6711aa1268d0909fd6593cf0369a5493size=71837date=2012-12-21T00:00:00
-file,ghost/master/saori/saori-nostr/LICENSEc956c4806791ef11c33e5c37f1123a3csize=10404date=2012-12-21T00:00:00
-file,ghost/master/saori/saori-nostr/saori_nostr.dll26b923fdf096670b824fc1b3267b5a71size=2154496date=2012-12-21T00:00:00
 file,ghost/master/saori/saori-qrcode/LICENSE091e0974ae1cc0686d0916bcbb96245dsize=10345date=2012-12-21T00:00:00
 file,ghost/master/saori/saori-qrcode/saori_qrcode.dll31cfc085d469754e3995e285a0e41371size=2006528date=2012-12-21T00:00:00
 file,ghost/master/saori/saori-resized-png/LICENSEb8a2f0c78b200232212f4258f72d1590size=1070date=2012-12-21T00:00:00

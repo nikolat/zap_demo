@@ -90,18 +90,23 @@ sys.input.message
 //取得したプロフィールイベントからlud16を探してlnurlを構築してリクエストを投げる
 OnExecuteWebSocketReceive
 {
-	_json = reference[3]
-	if RE_SEARCH(_json, 'EOSE') {
+	_json = PARSEJSON(reference[3])
+	if _json[0] == 'EOSE' {
 		"\C\![close,websocket,%(sys.fnc.getRelayURL())]\e"
 		return
 	}
-	//本当はちゃんとJSONパースすべきだけど今回は簡易的に
-	if !RE_SEARCH(_json, ',\\"lud16\\":\\"(.+?)@(.+?)\\"[,}]') {
+	if _json[0] != 'EVENT' {
 		return
 	}
-	_lud16 = RE_GETSTR()
-	_name = _lud16[1]
-	_domain = _lud16[2]
+	_event = _json[2]
+	_profile = PARSEJSON(_event['content'])
+	_lud16 = _profile['lud16']
+	if !RE_MATCH(_lud16, '(.+)@(.+)') {
+		return
+	}
+	_a = RE_GETSTR()
+	_name = _a[1]
+	_domain = _a[2]
 	_lnurl = "https://%(_domain)/.well-known/lnurlp/%(_name)"
 	_async = 'lnurl'
 	"\![execute,http-get,%(_lnurl),--async=%(_async),--file=lmurl.json]\e"
